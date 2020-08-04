@@ -5,7 +5,6 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
-	"schedule/model"
 )
 
 func main() {
@@ -17,31 +16,50 @@ func main() {
 	}
 	defer db.Close()
 
-	id := 201703
-	//rotaId := 2
+	rotaId := 291255583271555078
 
-	const sqlStr = "SELECT rota_id, title, shift, limit_choose, counter FROM rota WHERE id=?"
-	//err = db.QueryRow(sqlStr, id).Scan(1)
-	//if xerrors.Is(err, sql.ErrNoRows) {
-	//	fmt.Println(xerrors.Errorf("the error: %w", err))
-	//	return
-	//}
-	//fmt.Println(err)
+	const sqlStr1 = "SELECT DISTINCT openid FROM free WHERE rota_id=?"
 
-	rows, err := db.Query(sqlStr, id)
+	rows1, err := db.Query(sqlStr1, rotaId)
 	if err != nil {
-		fmt.Printf("query failed: %v", err)
+		fmt.Printf("select openid failed: %v", err)
 	}
-	defer rows.Close()
+	defer rows1.Close()
 
-	var rotas []model.Rota
-	for rows.Next() {
-		var rota model.Rota
-		if err := rows.Scan(&rota.RotaId, &rota.Title, &rota.Shift, &rota.LimitChoose, &rota.Counter); err != nil {
+	var openids []string
+	for rows1.Next() {
+		var openid string
+		if err := rows1.Scan(&openid); err != nil {
 			fmt.Printf("scan failed: %v", err)
 		}
-		rotas = append(rotas, rota)
+		openids = append(openids, openid)
 	}
 
-	fmt.Println(rotas)
+	// create In(?,?...?,?)
+	s := "?"
+	for i := 1; i < len(openids); i++ {
+		s += ",?"
+	}
+
+	// interface slice
+	openidsInterface := make([]interface{}, len(openids))
+	for i, v := range openids {
+		openidsInterface[i] = v
+	}
+
+	sqlStr2 := fmt.Sprintf("SELECT openid, nick_name FROM person WHERE openid IN (%s)", s)
+	rows2, err := db.Query(sqlStr2, openidsInterface...)
+	if err != nil {
+		fmt.Printf("select openid and nick_name failed: %v", err)
+	}
+	defer rows2.Close()
+
+	person := make(map[string]string)
+	for rows2.Next() {
+		var o, n string
+		if err := rows2.Scan(&o, &n); err != nil {
+			fmt.Printf("scan failed: %v", err)
+		}
+		person[o] = n
+	}
 }

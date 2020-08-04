@@ -7,13 +7,16 @@ import (
 
 type Api interface {
 	Login(ctx *gin.Context)
+	SavePerson(ctx *gin.Context)
 
 	NewRota(ctx *gin.Context)
 	GetRotas(ctx *gin.Context)
 
 	ChooseFree(ctx *gin.Context)
 	GetFrees(ctx *gin.Context)
+
 	Generate(ctx *gin.Context)
+	Download(ctx *gin.Context)
 
 	DeleteRota(ctx *gin.Context)
 }
