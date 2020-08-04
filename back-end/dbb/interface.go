@@ -13,6 +13,9 @@ import (
 
 type Interface interface {
 	Login(openid string) (ok bool, err error)
+	SavePerson(openid string, nickName string) (ok bool, err error)
+	OpenidAndNickName(rotaId int64) (person map[string]string, err error)
+
 	NewRota(rota model.Rota, openid string) (ok bool, err error)
 	GetRotas(openid string) (rotas []model.Rota, err error)
 

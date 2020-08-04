@@ -4,8 +4,8 @@
 
 ```json
 {
-    "id": "user_id",
-    "name": "张三"
+    "openid": "openid",
+    "nick_name": "张三"
 }
 ```
 

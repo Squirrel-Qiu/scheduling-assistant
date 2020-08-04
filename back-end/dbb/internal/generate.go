@@ -2,6 +2,7 @@ package internal
 
 import (
 	"database/sql"
+	"fmt"
 	"golang.org/x/xerrors"
 )
 
@@ -13,6 +14,7 @@ func (db *Impl) InitPerson(rotaId int64) (personShift map[string]int, err error)
 	defer rows.Close()
 
 	personShift = make(map[string]int)
+
 	for rows.Next() {
 		var person string
 		if err = rows.Scan(&person); err != nil {
@@ -49,8 +51,8 @@ func (db *Impl) QueryFree(rotaId int64) (frees []int, err error) {
 	}
 	defer rows.Close()
 
-	var free int
 	for rows.Next() {
+		var free int
 		if err = rows.Scan(&free); err != nil {
 			return nil, xerrors.Errorf("scan frees failed: %w", err)
 		}
@@ -68,8 +70,8 @@ func (db *Impl) QueryChoosePersons(rotaId int64, freeId int) (choosePersons []st
 	}
 	defer rows.Close()
 
-	var person string
 	for rows.Next() {
+		var person string
 		if err = rows.Scan(&person); err != nil {
 			return nil, xerrors.Errorf("scan choose persons failed: %w", err)
 		}
@@ -77,4 +79,54 @@ func (db *Impl) QueryChoosePersons(rotaId int64, freeId int) (choosePersons []st
 	}
 
 	return choosePersons, nil
+}
+
+func (db *Impl) OpenidAndNickName(rotaId int64) (person map[string]string, err error) {
+	const sqlStr1 = "SELECT DISTINCT openid FROM free WHERE rota_id=?"
+
+	rows1, err := db.DB.Query(sqlStr1, rotaId)
+	if err != nil {
+		return nil, xerrors.Errorf("select openid failed: %w", err)
+	}
+	defer rows1.Close()
+
+	var openids []string
+
+	for rows1.Next() {
+		var openid string
+		if err := rows1.Scan(&openid); err != nil {
+			return nil, xerrors.Errorf("scan openid failed: %w", err)
+		}
+		openids = append(openids, openid)
+	}
+
+	// create In(?,?...?,?)
+	s := "?"
+	for i := 1; i < len(openids); i++ {
+		s += ",?"
+	}
+
+	// openids []string To interface slice
+	openidsInterface := make([]interface{}, len(openids))
+	for i, v := range openids {
+		openidsInterface[i] = v
+	}
+
+	sqlStr2 := fmt.Sprintf("SELECT openid, nick_name FROM person WHERE openid IN (%s)", s)
+
+	rows2, err := db.DB.Query(sqlStr2, openidsInterface...)
+	if err != nil {
+		return nil, xerrors.Errorf("select openid and nick_name failed: %w", err)
+	}
+	defer rows2.Close()
+
+	person = make(map[string]string)
+	for rows2.Next() {
+		var o, n string
+		if err := rows2.Scan(&o, &n); err != nil {
+			return nil, xerrors.Errorf("scan openid and nick_name failed: %w", err)
+		}
+		person[o] = n
+	}
+	return person, nil
 }

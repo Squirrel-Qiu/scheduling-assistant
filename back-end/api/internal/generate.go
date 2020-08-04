@@ -2,11 +2,13 @@ package internal
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/tealeg/xlsx/v3"
 	"golang.org/x/xerrors"
 	"log"
 	"net/http"
 	"schedule/dbb"
 	"strconv"
+	"strings"
 )
 
 type Interval struct {
@@ -85,12 +87,23 @@ func (Implement) Generate(ctx *gin.Context) {
 			return
 		}
 
+		// openid to nick_name
+		person, err := dbb.DB.OpenidAndNickName(rotaId)
+		if err != nil {
+			log.Printf("%+v", xerrors.Errorf("db openid to nick_name failed: %w", err))
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"status": http.StatusInternalServerError,
+			})
+			return
+		}
+
 		// 在range内 choosePerson 应该 !=nil 不判断了
 		interval[i].FreeId = free
 		for _, choosePerson := range choosePersons {
+			nickName := person[choosePerson]
 			// 检查每个人已经被安排的次数
 			if personShift[choosePerson] < shift {
-				interval[i].Members = append(interval[i].Members, choosePerson)
+				interval[i].Members = append(interval[i].Members, nickName)
 				personShift[choosePerson]++
 			}
 
@@ -99,6 +112,34 @@ func (Implement) Generate(ctx *gin.Context) {
 				break
 			}
 		}
+	}
+
+	// input -> excel
+	var (
+		wb    *xlsx.File
+		sheet *xlsx.Sheet
+		cell  *xlsx.Cell
+	)
+
+	file := "..." // template file
+	wb, err = xlsx.OpenFile(file)
+	if err != nil {
+		panic(err)
+	}
+	sheet = wb.Sheets[0]
+
+	for i := range interval {
+		r := interval[i].FreeId % 5
+		c := interval[i].FreeId / 5
+		cell, _ = sheet.Cell(r+1, c)
+		cell.Value = strings.Join(interval[i].Members, "\n")
+	}
+
+	defer sheet.Close()
+	des := "..." + ctx.Param("rotaId") + ".xlsx"
+	err = wb.Save(des)
+	if err != nil {
+		log.Printf("%+v", xerrors.Errorf("xlsx save failed: %w", err))
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
