@@ -16,29 +16,30 @@ func (Implement) DeleteRota(ctx *gin.Context) {
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("parse rotaId failed: %w", err))
 		ctx.JSON(http.StatusOK, gin.H{
-			"status": http.StatusBadRequest,
+			"status": 1,
+			"msg": "rotaId错误",
 		})
 		return
 	}
 
-	ok, err := dbb.DB.DeleteRota(openid, rotaId)
+	_, err = dbb.DB.DeleteRota(openid, rotaId)
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("db delete rota failed: %w", err))
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"status": http.StatusInternalServerError,
+			"status": 2,
 		})
 		return
 	}
 
-	// delete好像不会在err== nil的情况下返回false？？？
-	if !ok {
-		ctx.JSON(http.StatusOK, gin.H{
-			"status": http.StatusForbidden,
-		})
-		return
-	}
+	// 一般delete不会在err== nil的情况下返回false
+	//if !ok {
+	//	ctx.JSON(http.StatusOK, gin.H{
+	//		"status": http.StatusForbidden,
+	//	})
+	//	return
+	//}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status": http.StatusOK,
+		"status": 0,
 	})
 }

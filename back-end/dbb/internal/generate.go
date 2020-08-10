@@ -106,7 +106,7 @@ func (db *Impl) OpenidAndNickName(rotaId int64) (person map[string]string, err e
 		s += ",?"
 	}
 
-	// openids []string To interface slice
+	// openids []string To []interface{}
 	openidsInterface := make([]interface{}, len(openids))
 	for i, v := range openids {
 		openidsInterface[i] = v

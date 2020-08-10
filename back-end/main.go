@@ -21,8 +21,8 @@ import (
 
 func main() {
 	//dbAddr := flag.String("dbaddr", "127.0.0.1", "database addr")
-	dbUser := flag.String("dbuser", "schedule", "database user")
-	dbPassword := flag.String("dbpassword", "schedule", "database password")
+	dbUser := flag.String("dbuser", "root", "database user")
+	dbPassword := flag.String("dbpassword", "root", "database password")
 	listenAddr := flag.String("listen", "127.0.0.1:8080", "web listen addr")
 	//debug := flag.Bool("debug", false, "debug mode")
 
@@ -46,8 +46,8 @@ func main() {
 
 	apI := api.New()
 
-	router.GET("/login", apI.Login)
-	router.POST("/savePerson", apI.SavePerson)
+	router.POST("/login", apI.Login)
+	router.POST("/savePerson", middleware.SessionChecker(), apI.SavePerson)
 
 	router.POST("/newRota", middleware.SessionChecker(), apI.NewRota)
 	router.GET("/rotas", middleware.SessionChecker(), apI.GetRotas)

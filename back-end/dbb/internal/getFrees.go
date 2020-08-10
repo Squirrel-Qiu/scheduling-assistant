@@ -8,7 +8,7 @@ import (
 func (db *Impl) GetFrees(openid string, rotaId int64) (frees []int, err error) {
 	const sqlStr = "SELECT free_id FROM free WHERE openid=? AND rota_id=?"
 
-	err = db.DB.QueryRow(sqlStr, openid).Scan(new(int))
+	err = db.DB.QueryRow(sqlStr, openid, rotaId).Scan(new(int))
 	if xerrors.Is(err, sql.ErrNoRows) {
 		return nil, nil
 	}

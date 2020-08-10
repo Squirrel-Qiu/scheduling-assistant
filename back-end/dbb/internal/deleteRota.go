@@ -12,7 +12,7 @@ func (db *Impl) DeleteRota(openid string, rotaId int64) (ok bool, err error) {
 		if err := tx.Rollback(); err != nil {
 			return false, xerrors.Errorf("rollback transaction failed: %w", err)
 		}
-		return false, xerrors.Errorf("db delete rota's frees failed: %w", err)
+		return false, xerrors.Errorf("db delete rota's all frees failed: %w", err)
 	}
 
 	result, err := tx.Exec("DELETE FROM rota WHERE rota_id=? AND openid=?", rotaId, openid)

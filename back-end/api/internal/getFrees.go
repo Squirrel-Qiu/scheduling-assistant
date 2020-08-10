@@ -17,7 +17,8 @@ func (Implement) GetFrees(ctx *gin.Context) {
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("parse rotaId failed: %w", err))
 		ctx.JSON(http.StatusOK, gin.H{
-			"status": http.StatusBadRequest,
+			"status": 1,
+			"msg": "rotaId错误",
 		})
 		return
 	}
@@ -26,12 +27,12 @@ func (Implement) GetFrees(ctx *gin.Context) {
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("db get frees failed: %w", err))
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"status": http.StatusInternalServerError,
+			"status": 2,
 		})
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status": http.StatusOK,
+		"status": 0,
 		"frees": frees,
 	})
 }

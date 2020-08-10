@@ -45,7 +45,8 @@ func (Implement) Login(ctx *gin.Context) {
 	if err := ctx.ShouldBindWith(code, binding.JSON); err != nil {
 		log.Printf("%+v", xerrors.Errorf("bind json failed: %w", err))
 		ctx.JSON(http.StatusOK, gin.H{
-			"status": http.StatusBadRequest,
+			"status": 1,
+			"msg": "请求参数错误",
 		})
 		return
 	}
@@ -53,8 +54,10 @@ func (Implement) Login(ctx *gin.Context) {
 	resp, err := getOpenid(*code)
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("get openid failed: %w", err))
+		// errcode:-1(系统繁忙); 40029(invalid code); 45011(频率限制)
 		ctx.JSON(http.StatusOK, gin.H{
-			"status": http.StatusUnauthorized, // 401鉴权失败
+			"status": 2,
+			"msg": "用户认证失败",
 		})
 		return
 	}
@@ -63,7 +66,7 @@ func (Implement) Login(ctx *gin.Context) {
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("db login failed: %w", err))
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"status": http.StatusInternalServerError,
+			"status": 3,
 		})
 		return
 	}
@@ -75,13 +78,13 @@ func (Implement) Login(ctx *gin.Context) {
 	if err := session.Save(); err != nil {
 		log.Printf("%+v", xerrors.Errorf("save session failed: %w", err))
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"status": http.StatusInternalServerError,
+			"status": 3,
 		})
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status": http.StatusOK,
+		"status": 0,
 	})
 }
 

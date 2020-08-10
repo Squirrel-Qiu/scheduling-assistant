@@ -15,12 +15,12 @@ func (Implement) GetRotas(ctx *gin.Context) {
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("db get rotas failed: %w", err))
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"status": http.StatusInternalServerError,
+			"status": 1,
 		})
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status": http.StatusOK,
+		"status": 0,
 		"rotas": rotas,
 	})
 }

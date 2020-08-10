@@ -21,7 +21,8 @@ func (Implement) Generate(ctx *gin.Context) {
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("parse rotaId failed: %w", err))
 		ctx.JSON(http.StatusOK, gin.H{
-			"status": http.StatusBadRequest,
+			"status": 1,
+			"msg": "rotaId错误",
 		})
 		return
 	}
@@ -31,7 +32,7 @@ func (Implement) Generate(ctx *gin.Context) {
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("db InitPerson failed: %w", err))
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"status": http.StatusInternalServerError,
+			"status": 3,
 		})
 		return
 	}
@@ -39,7 +40,8 @@ func (Implement) Generate(ctx *gin.Context) {
 	if personShift == nil {
 		log.Println("personShift: no one choose")
 		ctx.JSON(http.StatusOK, gin.H{
-			"status": http.StatusForbidden,
+			"status": 2,
+			"msg": "值班表为空",
 		})
 		return
 	}
@@ -49,7 +51,7 @@ func (Implement) Generate(ctx *gin.Context) {
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("db query frees failed: %w", err))
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"status": http.StatusInternalServerError,
+			"status": 3,
 		})
 		return
 	}
@@ -58,7 +60,8 @@ func (Implement) Generate(ctx *gin.Context) {
 	if frees == nil {
 		log.Println("frees: no one choose")
 		ctx.JSON(http.StatusOK, gin.H{
-			"status": http.StatusForbidden,
+			"status": 2,
+			"msg": "值班表为空",
 		})
 		return
 	}
@@ -68,7 +71,7 @@ func (Implement) Generate(ctx *gin.Context) {
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("db query rota's info(shift counter) failed: %w", err))
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"status": http.StatusInternalServerError,
+			"status": 3,
 		})
 		return
 	}
@@ -82,7 +85,7 @@ func (Implement) Generate(ctx *gin.Context) {
 		if err != nil {
 			log.Printf("%+v", xerrors.Errorf("db query choose persons failed: %w", err))
 			ctx.JSON(http.StatusInternalServerError, gin.H{
-				"status": http.StatusInternalServerError,
+				"status": 3,
 			})
 			return
 		}
@@ -92,7 +95,7 @@ func (Implement) Generate(ctx *gin.Context) {
 		if err != nil {
 			log.Printf("%+v", xerrors.Errorf("db openid to nick_name failed: %w", err))
 			ctx.JSON(http.StatusInternalServerError, gin.H{
-				"status": http.StatusInternalServerError,
+				"status": 3,
 			})
 			return
 		}
@@ -121,7 +124,7 @@ func (Implement) Generate(ctx *gin.Context) {
 		cell  *xlsx.Cell
 	)
 
-	file := "..." // template file
+	file := ".../test.xlsx" // template file
 	wb, err = xlsx.OpenFile(file)
 	if err != nil {
 		panic(err)
@@ -143,7 +146,7 @@ func (Implement) Generate(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status": http.StatusOK,
+		"status": 0,
 		"interval": interval,
 	})
 }

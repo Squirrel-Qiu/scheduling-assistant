@@ -18,7 +18,8 @@ func (Implement) NewRota(ctx *gin.Context) {
 	if err := ctx.ShouldBindWith(rota, binding.JSON); err != nil {
 		log.Printf("%+v", xerrors.Errorf("bind json failed: %w", err))
 		ctx.JSON(http.StatusOK, gin.H{
-			"status": http.StatusBadRequest,
+			"status": 1,
+			"msg": "请求参数错误",
 		})
 		return
 	}
@@ -26,39 +27,42 @@ func (Implement) NewRota(ctx *gin.Context) {
 	if !newRotaCheck(rota) {
 		log.Println("json content is wrong")
 		ctx.JSON(http.StatusOK, gin.H{
-			"status": http.StatusBadRequest,
+			"status": 2,
+			"msg": "限选不得小于班次",
 		})
 		return
 	}
 
-	// UUID
+	// rotaId
 	worker, err := snowFlakeByGo.NewWorker(0)
 	if err != nil {
 		log.Println("get uuid failed")
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"status": http.StatusInternalServerError,
+			"status": 3,
+			"msg": "实例化工作节点错误",
 		})
 		return
 	}
 	rota.RotaId = worker.GetId()
 
-	ok, err := dbb.DB.NewRota(*rota, openid)
+	_, err = dbb.DB.NewRota(*rota, openid)
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("when db new rota: %w", err))
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"status": http.StatusInternalServerError,
+			"status": 3,
 		})
 		return
 	}
 
-	if !ok {
-		ctx.JSON(http.StatusOK, gin.H{
-			"status": http.StatusBadRequest,
-		})
-		return
-	}
+	//if !ok {
+	//	ctx.JSON(http.StatusOK, gin.H{
+	//		"status": http.StatusBadRequest,
+	//	})
+	//	return
+	//}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status": http.StatusOK,
+		"status": 0,
+		"rota_id": rota.RotaId,
 	})
 }

@@ -17,7 +17,8 @@ func (Implement) Download(ctx *gin.Context) {
 	if err != nil && os.IsNotExist(err) {
 		log.Printf("%+v", xerrors.Errorf("file is not exist: %w", err))
 		ctx.JSON(http.StatusOK, gin.H{
-			"status": http.StatusNotFound,
+			"status": 1,
+			"msg": "值班表文件不存在",
 		})
 		return
 	}
