@@ -1,11 +1,12 @@
 package internal
 
 import (
+	"encoding/csv"
 	"github.com/gin-gonic/gin"
-	"github.com/tealeg/xlsx/v3"
 	"golang.org/x/xerrors"
 	"log"
 	"net/http"
+	"os"
 	"schedule/dbb"
 	"strconv"
 	"strings"
@@ -118,32 +119,57 @@ func (Implement) Generate(ctx *gin.Context) {
 	}
 
 	// input -> excel
-	var (
-		wb    *xlsx.File
-		sheet *xlsx.Sheet
-		cell  *xlsx.Cell
-	)
+	//var (
+	//	wb    *xlsx.File
+	//	sheet *xlsx.Sheet
+	//	cell  *xlsx.Cell
+	//)
+	//
+	//file := ".../scheduling-assistant/test.xlsx" // template file
+	//wb, err = xlsx.OpenFile(file)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//sheet = wb.Sheets[0]
+	//
+	//for i := range interval {
+	//	r := interval[i].FreeId % 5
+	//	c := interval[i].FreeId / 5
+	//	cell, _ = sheet.Cell(r+1, c)
+	//	cell.Value = strings.Join(interval[i].Members, "\n")
+	//}
+	//
+	//defer sheet.Close()
+	//des := ".../" + ctx.Param("rotaId") + ".xlsx"
+	//err = wb.Save(des)
+	//if err != nil {
+	//	log.Printf("%+v", xerrors.Errorf("xlsx save failed: %w", err))
+	//}
 
-	file := ".../scheduling-assistant/test.xlsx" // template file
-	wb, err = xlsx.OpenFile(file)
+
+	file := ".../" + ctx.Param("rotaId") + ".csv"
+	f, err := os.Create(file)
 	if err != nil {
-		panic(err)
+		log.Printf("%+v", xerrors.Errorf("csv create failed: %w", err))
 	}
-	sheet = wb.Sheets[0]
+
+	defer f.Close()
+
+	f.WriteString("\xEF\xBB\xBF")
+
+	w := csv.NewWriter(f)
+	data := [][]string{
+		{"周一", "周二", "周三", "周四", "周五", "周六", "周日"},
+	}
 
 	for i := range interval {
 		r := interval[i].FreeId % 5
 		c := interval[i].FreeId / 5
-		cell, _ = sheet.Cell(r+1, c)
-		cell.Value = strings.Join(interval[i].Members, "\n")
+		data[r+1][c] = strings.Join(interval[i].Members, "\n")
 	}
 
-	defer sheet.Close()
-	des := ".../" + ctx.Param("rotaId") + ".xlsx"
-	err = wb.Save(des)
-	if err != nil {
-		log.Printf("%+v", xerrors.Errorf("xlsx save failed: %w", err))
-	}
+	w.WriteAll(data)
+	w.Flush()
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"status": 0,
