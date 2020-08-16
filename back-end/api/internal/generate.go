@@ -76,6 +76,16 @@ func (Implement) Generate(ctx *gin.Context) {
 		return
 	}
 
+	// openid to nick_name
+	person, err := dbb.DB.OpenidAndNickName(rotaId)
+	if err != nil {
+		log.Printf("%+v", xerrors.Errorf("db openid to nick_name failed: %w", err))
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"status": 3,
+		})
+		return
+	}
+
 	// ###########  往已填的所有时间段塞人  ###########
 	var interval = make([]Interval, len(frees))
 
@@ -84,16 +94,6 @@ func (Implement) Generate(ctx *gin.Context) {
 		choosePersons, err := dbb.DB.QueryChoosePersons(rotaId, free)
 		if err != nil {
 			log.Printf("%+v", xerrors.Errorf("db query choose persons failed: %w", err))
-			ctx.JSON(http.StatusInternalServerError, gin.H{
-				"status": 3,
-			})
-			return
-		}
-
-		// openid to nick_name
-		person, err := dbb.DB.OpenidAndNickName(rotaId)
-		if err != nil {
-			log.Printf("%+v", xerrors.Errorf("db openid to nick_name failed: %w", err))
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"status": 3,
 			})
@@ -124,7 +124,7 @@ func (Implement) Generate(ctx *gin.Context) {
 		cell  *xlsx.Cell
 	)
 
-	file := ".../test.xlsx" // template file
+	file := ".../scheduling-assistant/test.xlsx" // template file
 	wb, err = xlsx.OpenFile(file)
 	if err != nil {
 		panic(err)
@@ -139,7 +139,7 @@ func (Implement) Generate(ctx *gin.Context) {
 	}
 
 	defer sheet.Close()
-	des := "..." + ctx.Param("rotaId") + ".xlsx"
+	des := ".../" + ctx.Param("rotaId") + ".xlsx"
 	err = wb.Save(des)
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("xlsx save failed: %w", err))

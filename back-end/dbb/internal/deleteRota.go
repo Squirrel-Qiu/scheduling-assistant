@@ -24,7 +24,6 @@ func (db *Impl) DeleteRota(openid string, rotaId int64) (ok bool, err error) {
 		return false, xerrors.Errorf("db delete rota failed: %w", err)
 	}
 
-	// unnecessary
 	if affected, _ := result.RowsAffected(); affected != 1 {
 		if err := tx.Rollback(); err != nil {
 			return false, xerrors.Errorf("rollback transaction failed: %w", err)

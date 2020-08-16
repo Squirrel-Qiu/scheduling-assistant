@@ -42,7 +42,7 @@ func main() {
 	}
 	store := memstore.NewStore(sessionAuthKey)
 
-	router.Use(sessions.Sessions("", store))
+	router.Use(sessions.Sessions("cookie", store))
 
 	apI := api.New()
 

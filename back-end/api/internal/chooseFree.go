@@ -30,7 +30,7 @@ func (Implement) ChooseFree(ctx *gin.Context) {
 
 	frees := new(Free)
 
-	if err := ctx.ShouldBindWith(&frees, binding.JSON); err != nil {
+	if err := ctx.ShouldBindWith(frees, binding.JSON); err != nil {
 		log.Printf("%+v", xerrors.Errorf("bind json failed: %w", err))
 		ctx.JSON(http.StatusOK, gin.H{
 			"status": 2,

@@ -10,30 +10,29 @@ func (db *Impl) ChooseFree(openid string, rotaId int64, frees []int) (ok bool, e
 		return false, xerrors.Errorf("start transaction failed: %w", err)
 	}
 
-	rows, err := tx.Query("SELECT free_id FROM free WHERE openid=? AND rota_id=?", openid, rotaId)
-	switch {
-	default:
+	//rows, err := tx.Query("SELECT free_id FROM free WHERE openid=? AND rota_id=?", openid, rotaId)
+	//switch {
+	//default:
+	//	if err := tx.Rollback(); err != nil {
+	//		return false, xerrors.Errorf("rollback transaction failed: %w", err)
+	//	}
+	//	return false, xerrors.Errorf("select frees failed: %w", err)
+	//case err == nil:
+	//}
+	//defer rows.Close()
+
+	// delete if rows already exists, or insert
+	//if rows.Next() {
+	if _, err = tx.Exec("DELETE FROM free WHERE openid=? AND rota_id=?", openid, rotaId); err != nil {
 		if err := tx.Rollback(); err != nil {
 			return false, xerrors.Errorf("rollback transaction failed: %w", err)
 		}
-		return false, xerrors.Errorf("select frees failed: %w", err)
-	case err == nil:
+		return false, xerrors.Errorf("db delete chosen frees failed: %w", err)
 	}
-	defer rows.Close()
-
-	// delete if rows already exists, or insert
-	if rows.Next() {
-		if _, err = tx.Exec("DELETE FROM free WHERE openid=? AND rota_id=?", openid, rotaId); err != nil {
-			if err := tx.Rollback(); err != nil {
-				return false, xerrors.Errorf("rollback transaction failed: %w", err)
-			}
-			return false, xerrors.Errorf("db delete chosen frees failed: %w", err)
-		}
-	}
+	//}
 
 	for _, freeId := range frees {
-		result, err := tx.Exec("INSERT INTO free (openid, rota_id, free_id) VALUES (?, ?, ?)",
-			openid, rotaId, freeId)
+		_, err := tx.Exec("INSERT INTO free (openid, rota_id, free_id) VALUES (?, ?, ?)", openid, rotaId, freeId)
 
 		if err != nil {
 			if err := tx.Rollback(); err != nil {
@@ -43,12 +42,12 @@ func (db *Impl) ChooseFree(openid string, rotaId int64, frees []int) (ok bool, e
 		}
 
 		// unnecessary
-		if affected, _ := result.RowsAffected(); affected != 1 {
-			if err := tx.Rollback(); err != nil {
-				return false, xerrors.Errorf("rollback transaction failed: %w", err)
-			}
-			return false, xerrors.New("insert chosen freeId failed")
-		}
+		//if affected, _ := result.RowsAffected(); affected != 1 {
+		//	if err := tx.Rollback(); err != nil {
+		//		return false, xerrors.Errorf("rollback transaction failed: %w", err)
+		//	}
+		//	return false, xerrors.New("insert chosen freeId failed")
+		//}
 	}
 
 	if err = tx.Commit(); err != nil {

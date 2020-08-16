@@ -7,6 +7,7 @@ import (
 	"log"
 	"schedule/dbb/internal"
 	"schedule/model"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -45,9 +46,11 @@ func InitDB(user, password string) (err error) {
 		log.Fatal(err)
 	}
 
+	db.SetMaxOpenConns(2000)
+	db.SetMaxIdleConns(200)
+	db.SetConnMaxLifetime(300 * time.Second)
+
 	DB = &internal.Impl{DB: db}
 
 	return nil
 }
-
-
