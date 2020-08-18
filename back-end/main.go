@@ -51,6 +51,7 @@ func main() {
 
 	router.POST("/newRota", middleware.SessionChecker(), apI.NewRota)
 	router.GET("/rotas", middleware.SessionChecker(), apI.GetRotas)
+	router.GET("/join", middleware.SessionChecker(), apI.GetJoin)
 
 	router.GET("/rota/:rotaId", middleware.SessionChecker(), apI.GetFrees)
 	router.POST("/chooseFree/:rotaId", middleware.SessionChecker(), apI.ChooseFree)

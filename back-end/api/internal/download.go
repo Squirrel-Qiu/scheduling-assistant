@@ -25,7 +25,7 @@ func (Implement) Download(ctx *gin.Context) {
 
 	ctx.Writer.WriteHeader(http.StatusOK)
 	ctx.Writer.Header().Set("Content-Disposition", `attachment; filename="值班表.xlsx"`)
-	ctx.Header("Content-Type", "application/octet-stream; charset=utf-8")
+	ctx.Header("Content-Type", "text/csv; charset=utf-8")
 	ctx.Header("Content-Transfer-Encoding", "binary")
 	ctx.File(filePath)
 }

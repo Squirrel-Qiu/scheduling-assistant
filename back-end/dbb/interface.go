@@ -19,6 +19,7 @@ type Interface interface {
 
 	NewRota(rota model.Rota, openid string) (ok bool, err error)
 	GetRotas(openid string) (rotas []model.Rota, err error)
+	GetJoin(openid string) (joins []model.SimpleRota, err error)
 
 	GetFrees(openid string, rotaId int64) (frees []int, err error)
 	GetLimitChoose(rotaId int64) (limit int, err error)

@@ -11,6 +11,7 @@ type Api interface {
 
 	NewRota(ctx *gin.Context)
 	GetRotas(ctx *gin.Context)
+	GetJoin(ctx *gin.Context)
 
 	ChooseFree(ctx *gin.Context)
 	GetFrees(ctx *gin.Context)
