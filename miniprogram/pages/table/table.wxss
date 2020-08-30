@@ -1,0 +1,63 @@
+/* pages/table/table.wxss */
+.flex-item {  
+  width: 95rpx;
+  height: 215rpx;
+}
+
+.kcb-item {
+  position: absolute;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+}
+
+.smalltext {
+  font-size: 8pt;
+  color: #fff;
+  padding-left: 6rpx;
+}
+
+.top {
+  display: flex;
+  flex-direction: row;
+  margin-left: 35rpx;
+  background-color: #338fff;
+  color: #ffffff;
+}
+
+.top-text {
+  width: 100rpx;
+  height: 35rpx;
+  font-size: 9pt;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+
+.scroll {
+  height: 1170rpx;
+  z-index: 101;
+  position: fixed;
+}
+
+.left {
+  width: 35rpx;
+  height: 215rpx;
+  font-size: 9pt;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+.btn{
+  background-color: #2d8bf0e9;
+  color:#fff;
+  display: flex;
+  margin-top: 20rpx;
+  justify-content: center;
+  height: 55rpx;
+  font-size: 26rpx!important;
+}
+.btn_hover{
+  background-color: #2d8bf07c;
+}

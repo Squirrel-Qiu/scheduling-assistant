@@ -1,0 +1,40 @@
+{
+  "tabBar": {
+    "color": "#333333",
+    "selectedColor": "#2e75b8",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "selectedIconPath": "images/calendar.png",
+        "iconPath": "images/calendar.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/rotas/rotas",
+        "selectedIconPath": "images/user.png",
+        "iconPath": "images/user.png",
+        "text": "我的创建"
+      },
+      {
+        "pagePath": "pages/join/join",
+        "selectedIconPath": "images/join.png",
+        "iconPath": "images/join.png",
+        "text": "我的参与"
+      }
+    ]
+  },
+  "pages": [
+    "pages/index/index",
+    "pages/rotas/rotas",
+    "pages/table/table",
+    "pages/rota/rota",
+    "pages/join/join"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "排班助手",
+    "navigationBarTextStyle": "black"
+  },
+  "sitemapLocation": "sitemap.json"
+}

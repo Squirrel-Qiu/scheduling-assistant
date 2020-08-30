@@ -1,0 +1,9 @@
+<!--rotas.wxml-->
+<view wx:for="{{joins}}" wx:key="index" class="join-list">
+    <view class="allview">
+      <view style="flex-item; font-size:30rpx; padding-top: 13rpx">{{item.title}}</view>
+      <view>
+        <button class="btn" style="flex-item" bindtap="handleClick1" data-rotaid="{{item.rota_id}}" hover-class="btn_hover" size="mini">查看</button>
+      </view>
+    </view>
+</view>

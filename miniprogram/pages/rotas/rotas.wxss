@@ -1,0 +1,17 @@
+.rota-list {
+  display: flex;
+  flex-direction: column;
+  padding: 1rpx 20rpx;
+  margin-top: 20rpx;
+}
+.btn{
+  background-color: #2d8bf0e9;
+  color:#fff;
+  display:inline-block!important;
+  margin: 8rpx 40rpx 5rpx 5rpx;
+  height: 50rpx;
+  font-size: 26rpx!important;
+}
+.btn_hover{
+  background-color: #2d8bf07c;
+}

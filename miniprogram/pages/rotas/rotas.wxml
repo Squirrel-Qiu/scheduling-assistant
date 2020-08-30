@@ -1,0 +1,10 @@
+<!--rotas.wxml-->
+<view wx:for="{{rotas}}" wx:key="index" class="rota-list">
+    <view style='font-size:30rpx;'>{{item.title}}</view>
+    <view style='font-size:25rpx;color:#666;'>班次：{{item.shift}} 限选：{{item.limit_choose}} 容量：{{item.counter}}</view>
+    <view>
+      <button class="btn" bindtap="handleClick1" data-rotaid="{{item.rota_id}}" hover-class="btn_hover" size="mini">查看</button>
+      <button class="btn" bindtap="handleClick2" data-rotaid="{{item.rota_id}}" hover-class="btn_hover" size="mini">生成</button>
+      <button class="btn" bindtap="handleClick3" data-rotaid="{{item.rota_id}}" hover-class="btn_hover" size="mini">删除</button>
+    </view>
+</view>

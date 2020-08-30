@@ -1,0 +1,46 @@
+/**index.wxss**/
+.container{
+  margin-top: -150rpx;
+}
+
+.userinfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.userinfo-avatar {
+  width: 128rpx;
+  height: 128rpx;
+  margin: 20rpx;
+  border-radius: 50%;
+}
+
+.userinfo-nickname {
+  color: #aaa;
+}
+
+.usermotto {
+  margin-top: 200px;
+}
+
+.new-rota {
+  margin:auto;
+  display: flex;
+  flex-direction: column;
+  padding: 5rpx;
+}
+
+.btn{
+  background-color: #2d8bf0e9;
+  color:#fff;
+  display: flex;
+  margin-top: 40rpx;
+  justify-content: center;
+  height: 75rpx;
+  width: 320rpx;
+  font-size: 27rpx!important;
+}
+.btn_hover{
+  background-color: #2d8bf07c;
+}

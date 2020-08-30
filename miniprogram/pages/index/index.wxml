@@ -1,0 +1,34 @@
+<!--index.wxml-->
+<view class="container">
+  <view class="userinfo">
+    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
+    <block wx:else>
+      <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
+      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
+    </block>
+  </view>
+
+  <view class="new-rota">
+    <panel title="基础用法">
+      <i-input model:value="{{title}}" type="textarea" title="标题" placeholder="请输入标题(最多50字)" bindinput="bindTitleInput" maxlength="50" focus='true'/>
+
+      <i-input type="textarea" title="班次" placeholder="每个人在该值班表中值班的次数" disabled/>
+      <view style="padding: 6px">
+        <i-input-number model:value="{{shift}}" min="1" max="35" bindchange="handleChange1" />
+      </view>
+
+      <i-input type="textarea" title="限选" placeholder="每个人应选择的次数(不得小于班次)" disabled/>
+      <view style="padding: 6px">
+        <i-input-number model:value="{{limitChoose}}" min="1" max="35" bindchange="handleChange2" />
+      </view>
+
+      <i-input type="textarea" title="容量" placeholder="每个时间段最多当值的人数" disabled/>
+      <view style="padding: 6px">
+        <i-input-number model:value="{{counter}}" min="1" max="35" bindchange="handleChange3" />
+      </view>
+
+    </panel>
+  </view>
+  
+  <button class="btn" bindtap="handleClick" hover-class="btn_hover" >新建值班表</button>
+</view>
