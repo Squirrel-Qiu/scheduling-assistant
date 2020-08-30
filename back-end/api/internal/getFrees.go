@@ -1,15 +1,15 @@
 package internal
 
 import (
-	"github.com/gin-gonic/gin"
-	"golang.org/x/xerrors"
 	"log"
 	"net/http"
-	"schedule/dbb"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
+	"golang.org/x/xerrors"
 )
 
-func (Implement) GetFrees(ctx *gin.Context) {
+func (impl *Implement) GetFrees(ctx *gin.Context) {
 	openid := ctx.Value("openid").(string)
 
 	// 解析参数请求
@@ -23,7 +23,7 @@ func (Implement) GetFrees(ctx *gin.Context) {
 		return
 	}
 
-	frees, err := dbb.DB.GetFrees(openid, rotaId)
+	frees, err := impl.DB.GetFrees(openid, rotaId)
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("db get frees failed: %w", err))
 		ctx.JSON(http.StatusInternalServerError, gin.H{

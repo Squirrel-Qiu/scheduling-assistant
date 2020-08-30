@@ -11,7 +11,7 @@ import (
 func (Implement) Download(ctx *gin.Context) {
 	rotaId := ctx.Param("rotaId")
 
-	filePath := ".../" + rotaId + ".csv"
+	filePath := "/.../" + rotaId + ".csv"
 
 	_, err := os.Stat(filePath)
 	if err != nil && os.IsNotExist(err) {

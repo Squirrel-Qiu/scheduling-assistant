@@ -3,15 +3,20 @@ package main
 import (
 	"context"
 	"crypto/rand"
+	"database/sql"
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"time"
+
 	"schedule/api"
 	"schedule/dbb"
 	"schedule/middleware"
-	"time"
+	"schedule/snowid"
+	"schedule/wechatid"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/memstore"
@@ -24,16 +29,33 @@ func main() {
 	dbUser := flag.String("dbuser", "root", "database user")
 	dbPassword := flag.String("dbpassword", "root", "database password")
 	listenAddr := flag.String("listen", "127.0.0.1:8080", "web listen addr")
-	//debug := flag.Bool("debug", false, "debug mode")
+	debug := flag.Bool("debug", false, "debug mode")
 
 	flag.Parse()
 
-	if err := dbb.InitDB(*dbUser, *dbPassword); err != nil {
+	user := *dbUser
+	password := *dbPassword
+	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@/schedule", user, password))
+	if err != nil {
 		log.Fatalf("%+v", err)
+	}
+
+	if err = db.Ping(); err != nil {
+		log.Fatalf("%+v", err)
+	}
+
+	dbInstance := dbb.InitDB(db)
+
+	if !(*debug) {
+		gin.SetMode(gin.ReleaseMode)
 	}
 
 	router := gin.New()
 	router.Use(gin.Recovery())
+
+	if *debug {
+		router.Use(gin.ErrorLogger())
+	}
 
 	// init session store
 	sessionAuthKey := make([]byte, 32)
@@ -44,7 +66,7 @@ func main() {
 
 	router.Use(sessions.Sessions("cookie", store))
 
-	apI := api.New()
+	apI := api.New(dbInstance, wechatid.Wechat{}, snowid.SnowFlake{})
 
 	router.POST("/login", apI.Login)
 	router.POST("/savePerson", middleware.SessionChecker(), apI.SavePerson)
@@ -80,7 +102,7 @@ func main() {
 
 	log.Println("start http server")
 
-	err := httpServer.ListenAndServe()
+	err = httpServer.ListenAndServe()
 	switch err {
 	case http.ErrServerClosed:
 		<-shutdownChan
@@ -89,7 +111,7 @@ func main() {
 		log.Println(err)
 	}
 
-	if err := dbb.DB.Close(); err != nil {
+	if err := db.Close(); err != nil {
 		log.Printf("%+v", xerrors.Errorf("close db failed: %w", err))
 	}
 }

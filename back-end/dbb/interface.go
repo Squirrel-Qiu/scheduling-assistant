@@ -2,17 +2,14 @@ package dbb
 
 import (
 	"database/sql"
-	"fmt"
-	"io"
-	"log"
+
 	"schedule/dbb/internal"
 	"schedule/model"
-	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type Interface interface {
+type DBApi interface {
 	Login(openid string) (ok bool, err error)
 	SavePerson(openid string, nickName string) (ok bool, err error)
 	OpenidAndNickName(rotaId int64) (person map[string]string, err error)
@@ -31,27 +28,30 @@ type Interface interface {
 	QueryChoosePersons(rotaId int64, freeId int) (choosePerson []string, err error)
 
 	DeleteRota(openid string, rotaId int64) (ok bool, err error)
-	io.Closer
 }
 
-var DB Interface
-
-func InitDB(user, password string) (err error) {
-	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@/schedule", user, password))
-
-	if err != nil {
-		return err
-	}
-
-	if err = db.Ping(); err != nil {
-		log.Fatal(err)
-	}
-
-	db.SetMaxOpenConns(2000)
-	db.SetMaxIdleConns(200)
-	db.SetConnMaxLifetime(300 * time.Second)
-
+func InitDB(db *sql.DB) (DB DBApi) {
 	DB = &internal.Impl{DB: db}
 
-	return nil
+	return DB
 }
+
+//func InitDBForTest(user, password string) (err error) {
+//	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@/schedule", user, password))
+//
+//	if err != nil {
+//		return err
+//	}
+//
+//	if err = db.Ping(); err != nil {
+//		log.Fatal(err)
+//	}
+//
+//
+//	db.SetMaxOpenConns(2000)
+//	db.SetMaxIdleConns(200)
+//	db.SetConnMaxLifetime(300 * time.Second)
+//
+//	DB = &internal.Impl{DB: db}
+//	return nil
+//}

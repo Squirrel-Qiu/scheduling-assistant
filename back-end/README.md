@@ -70,9 +70,9 @@ status = 2: 服务器内部错误
 
 ```json
 {
-    "title": "xxx值班表",
+    "title": "一月份值班表",
     "shift": 2,
-    "limit_choose": 4,
+    "limit_choose": 2,
     "counter": 6
 }
 ```
@@ -175,7 +175,7 @@ status = 1: 服务器内部错误
 }
 ```
 
-### 前端 GET /rota/rota_id=291255583271555074 查看某一值班表(携带cookie)
+### 前端 GET /rota/(rota_id=)291255583271555074 查看某一值班表(携带cookie)
 
 ### 后端 return
 
@@ -198,7 +198,7 @@ status = 2: 服务器内部错误
 }
 ```
 
-### 前端 POST /chooseFree/rota_id=291255583271555074 在该值班表下选择时间段(携带cookie)
+### 前端 POST /chooseFree/(rota_id=)291255583271555074 在该值班表下选择时间段(携带cookie)
 
 ```json
 {
@@ -252,11 +252,11 @@ status = 4: 服务器内部错误
                 "members": ["张三", "李四", "王明"]
             },
             {
-                "rota_id": 14,
+                "free_id": 14,
                 "members": ["张三"]
             },
             {
-                "rota_id": 21,
+                "free_id": 21,
                 "members": ["李四", "王明"]
             }
         ]

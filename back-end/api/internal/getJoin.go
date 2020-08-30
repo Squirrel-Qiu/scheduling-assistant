@@ -1,17 +1,17 @@
 package internal
 
 import (
-	"github.com/gin-gonic/gin"
-	"golang.org/x/xerrors"
 	"log"
 	"net/http"
-	"schedule/dbb"
+
+	"github.com/gin-gonic/gin"
+	"golang.org/x/xerrors"
 )
 
-func (Implement) GetJoin(ctx *gin.Context) {
+func (impl *Implement) GetJoin(ctx *gin.Context) {
 	openid := ctx.Value("openid").(string)
 
-	joins, err := dbb.DB.GetJoin(openid)
+	joins, err := impl.DB.GetJoin(openid)
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("db get join failed: %w", err))
 		ctx.JSON(http.StatusInternalServerError, gin.H{

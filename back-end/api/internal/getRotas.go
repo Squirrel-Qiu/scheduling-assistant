@@ -1,17 +1,17 @@
 package internal
 
 import (
-	"github.com/gin-gonic/gin"
-	"golang.org/x/xerrors"
 	"log"
 	"net/http"
-	"schedule/dbb"
+
+	"github.com/gin-gonic/gin"
+	"golang.org/x/xerrors"
 )
 
-func (Implement) GetRotas(ctx *gin.Context) {
+func (impl *Implement) GetRotas(ctx *gin.Context) {
 	openid := ctx.Value("openid").(string)
 
-	rotas, err := dbb.DB.GetRotas(openid)
+	rotas, err := impl.DB.GetRotas(openid)
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("db get rotas failed: %w", err))
 		ctx.JSON(http.StatusInternalServerError, gin.H{

@@ -2,7 +2,11 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+
 	"schedule/api/internal"
+	"schedule/dbb"
+	"schedule/snowid"
+	"schedule/wechatid"
 )
 
 type Api interface {
@@ -22,6 +26,6 @@ type Api interface {
 	DeleteRota(ctx *gin.Context)
 }
 
-func New() Api {
-	return internal.Implement{}
+func New(dbInstance dbb.DBApi, openid wechatid.OpenidGetter, rotaId snowid.RotaidGetter) Api {
+	return &internal.Implement{DB: dbInstance, OpenidGetter: openid, RotaidGetter: rotaId}
 }

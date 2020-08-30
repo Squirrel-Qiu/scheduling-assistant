@@ -2,14 +2,14 @@ package internal
 
 import (
 	"encoding/csv"
-	"github.com/gin-gonic/gin"
-	"golang.org/x/xerrors"
 	"log"
 	"net/http"
 	"os"
-	"schedule/dbb"
 	"strconv"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	"golang.org/x/xerrors"
 )
 
 type Interval struct {
@@ -17,7 +17,7 @@ type Interval struct {
 	Members []string `json:"members"`
 }
 
-func (Implement) Generate(ctx *gin.Context) {
+func (impl *Implement) Generate(ctx *gin.Context) {
 	rotaId, err := strconv.ParseInt(ctx.Param("rotaId"), 10, 64)
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("parse rotaId failed: %w", err))
@@ -29,7 +29,7 @@ func (Implement) Generate(ctx *gin.Context) {
 	}
 
 	// ###########  人员初始化(被安排班次为0)  ###########
-	personShift, err := dbb.DB.InitPerson(rotaId)
+	personShift, err := impl.DB.InitPerson(rotaId)
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("db InitPerson failed: %w", err))
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -48,7 +48,7 @@ func (Implement) Generate(ctx *gin.Context) {
 	}
 
 	// ###########  查询已填的所有时间段  ###########
-	frees, err := dbb.DB.QueryFree(rotaId)
+	frees, err := impl.DB.QueryFree(rotaId)
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("db query frees failed: %w", err))
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -68,7 +68,7 @@ func (Implement) Generate(ctx *gin.Context) {
 	}
 
 	// ###########  query rota's Info  ###########
-	shift, counter, err := dbb.DB.QueryRotaInfo(rotaId)
+	shift, counter, err := impl.DB.QueryRotaInfo(rotaId)
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("db query rota's info(shift counter) failed: %w", err))
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -78,7 +78,7 @@ func (Implement) Generate(ctx *gin.Context) {
 	}
 
 	// openid to nick_name
-	person, err := dbb.DB.OpenidAndNickName(rotaId)
+	person, err := impl.DB.OpenidAndNickName(rotaId)
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("db openid to nick_name failed: %w", err))
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -92,7 +92,7 @@ func (Implement) Generate(ctx *gin.Context) {
 
 	for i, free := range frees {
 		// ###########  选择该时间段的所有人  ###########
-		choosePersons, err := dbb.DB.QueryChoosePersons(rotaId, free)
+		choosePersons, err := impl.DB.QueryChoosePersons(rotaId, free)
 		if err != nil {
 			log.Printf("%+v", xerrors.Errorf("db query choose persons failed: %w", err))
 			ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -147,7 +147,7 @@ func (Implement) Generate(ctx *gin.Context) {
 	//}
 
 
-	file := ".../" + ctx.Param("rotaId") + ".csv"
+	file := "/.../" + ctx.Param("rotaId") + ".csv"
 	f, err := os.Create(file)
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("csv create failed: %w", err))

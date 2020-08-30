@@ -2,8 +2,8 @@ package internal
 
 import (
 	"golang.org/x/xerrors"
+
 	"schedule/model"
-	"time"
 )
 
 func (db *Impl) NewRota(rota model.Rota, openid string) (ok bool, err error) {
@@ -12,8 +12,8 @@ func (db *Impl) NewRota(rota model.Rota, openid string) (ok bool, err error) {
 		return false, xerrors.Errorf("start transaction failed: %w", err)
 	}
 
-	result, err := tx.Exec("INSERT INTO rota (rota_id, title, openid, shift, limit_choose, counter, date) VALUES (?, ?, ?, ?, ?, ?, ?)",
-		rota.RotaId, rota.Title, openid, rota.Shift, rota.LimitChoose, rota.Counter, time.Now())
+	result, err := tx.Exec("INSERT INTO rota (rota_id, title, openid, shift, limit_choose, counter) VALUES (?, ?, ?, ?, ?, ?)",
+		rota.RotaId, rota.Title, openid, rota.Shift, rota.LimitChoose, rota.Counter)
 
 	if err != nil {
 		if err := tx.Rollback(); err != nil {

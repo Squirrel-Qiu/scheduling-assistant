@@ -1,17 +1,18 @@
 package internal
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
-	"github.com/holdno/snowFlakeByGo"
-	"golang.org/x/xerrors"
 	"log"
 	"net/http"
-	"schedule/dbb"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"golang.org/x/xerrors"
+
 	"schedule/model"
 )
 
-func (Implement) NewRota(ctx *gin.Context) {
+func (impl *Implement) NewRota(ctx *gin.Context) {
 	openid := ctx.Value("openid").(string)
 
 	rota := new(model.Rota)
@@ -19,7 +20,7 @@ func (Implement) NewRota(ctx *gin.Context) {
 		log.Printf("%+v", xerrors.Errorf("bind json failed: %w", err))
 		ctx.JSON(http.StatusOK, gin.H{
 			"status": 1,
-			"msg": "请求参数错误",
+			"msg":    "请求参数错误",
 		})
 		return
 	}
@@ -28,24 +29,14 @@ func (Implement) NewRota(ctx *gin.Context) {
 		log.Println("json content is wrong")
 		ctx.JSON(http.StatusOK, gin.H{
 			"status": 2,
-			"msg": "限选不得小于班次",
+			"msg":    "限选不得小于班次",
 		})
 		return
 	}
 
-	// rotaId
-	worker, err := snowFlakeByGo.NewWorker(0)
-	if err != nil {
-		log.Println("get uuid failed")
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"status": 3,
-			"msg": "实例化工作节点错误",
-		})
-		return
-	}
-	rota.RotaId = worker.GetId()
+	rota.RotaId = impl.RotaidGetter.GetRotaId()
 
-	_, err = dbb.DB.NewRota(*rota, openid)
+	_, err := impl.DB.NewRota(*rota, openid)
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("when db new rota: %w", err))
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -62,7 +53,7 @@ func (Implement) NewRota(ctx *gin.Context) {
 	//}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"status": 0,
-		"rota_id": rota.RotaId,
+		"status":  0,
+		"rota_id": strconv.FormatInt(rota.RotaId, 10),
 	})
 }

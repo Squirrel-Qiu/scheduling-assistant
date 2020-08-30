@@ -1,15 +1,15 @@
 package internal
 
 import (
-	"github.com/gin-gonic/gin"
-	"golang.org/x/xerrors"
 	"log"
 	"net/http"
-	"schedule/dbb"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
+	"golang.org/x/xerrors"
 )
 
-func (Implement) DeleteRota(ctx *gin.Context) {
+func (impl *Implement) DeleteRota(ctx *gin.Context) {
 	openid := ctx.Value("openid").(string)
 
 	rotaId, err := strconv.ParseInt(ctx.Param("rotaId"), 10, 64)
@@ -22,7 +22,7 @@ func (Implement) DeleteRota(ctx *gin.Context) {
 		return
 	}
 
-	_, err = dbb.DB.DeleteRota(openid, rotaId)
+	_, err = impl.DB.DeleteRota(openid, rotaId)
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("db delete rota failed: %w", err))
 		ctx.JSON(http.StatusInternalServerError, gin.H{

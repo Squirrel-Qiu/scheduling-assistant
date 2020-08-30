@@ -2,6 +2,7 @@ package internal
 
 import (
 	"database/sql"
+
 	"golang.org/x/xerrors"
 )
 
@@ -9,11 +10,19 @@ func (db *Impl) GetFrees(openid string, rotaId int64) (frees []int, err error) {
 	const sqlStr = "SELECT free_id FROM free WHERE openid=? AND rota_id=?"
 
 	err = db.DB.QueryRow(sqlStr, openid, rotaId).Scan(new(int))
-	if xerrors.Is(err, sql.ErrNoRows) {
+
+	switch {
+	case xerrors.Is(err, sql.ErrNoRows):
 		return nil, nil
+
+	default:
+		return nil, xerrors.Errorf("scan failed: %w", err)
+
+	case err == nil:
 	}
 
 	rows, err := db.DB.Query(sqlStr, openid, rotaId)
+
 	if err != nil {
 		return nil, xerrors.Errorf("select frees failed: %w", err)
 	}

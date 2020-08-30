@@ -3,6 +3,7 @@ package internal
 import (
 	"database/sql"
 	"fmt"
+
 	"golang.org/x/xerrors"
 )
 
