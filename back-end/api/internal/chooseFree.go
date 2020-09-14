@@ -18,6 +18,16 @@ type Free struct {
 func (impl *Implement) ChooseFree(ctx *gin.Context) {
 	openid := ctx.Value("openid").(string)
 
+	_, err := impl.DB.CheckNickName(openid)
+	if err != nil {
+		log.Printf("%+v", xerrors.Errorf("check nickName failed: %w", err))
+		ctx.JSON(http.StatusOK, gin.H{
+			"status": 1,
+			"msg": "rotaId错误",
+		})
+		return
+	}
+
 	rotaId, err := strconv.ParseInt(ctx.Param("rotaId"), 10, 64)
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("parse rotaId failed: %w", err))

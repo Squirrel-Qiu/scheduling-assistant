@@ -22,6 +22,10 @@ func (db *Impl) GetJoin(openid string) (joins []model.SimpleRota, err error) {
 		rotas = append(rotas, rotaId)
 	}
 
+	if len(rotas) == 0 {
+		return nil, nil
+	}
+
 	// create In(?,?...?,?)
 	s := "?"
 	for i := 1; i < len(rotas); i++ {

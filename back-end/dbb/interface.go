@@ -19,6 +19,7 @@ type DBApi interface {
 	GetJoin(openid string) (joins []model.SimpleRota, err error)
 
 	GetFrees(openid string, rotaId int64) (frees []int, err error)
+	CheckNickName(openid string) (nickName string, err error)
 	GetLimitChoose(rotaId int64) (limit int, err error)
 	ChooseFree(openid string, rotaId int64, frees []int) (ok bool, err error)
 

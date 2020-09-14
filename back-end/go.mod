@@ -3,6 +3,7 @@ module schedule
 go 1.14
 
 require (
+	github.com/BurntSushi/toml v0.3.1
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/gin-contrib/sessions v0.0.3
 	github.com/gin-gonic/gin v1.6.3
