@@ -22,8 +22,8 @@ func (impl *Implement) ChooseFree(ctx *gin.Context) {
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("check nickName failed: %w", err))
 		ctx.JSON(http.StatusOK, gin.H{
-			"status": 1,
-			"msg": "rotaId错误",
+			"status": 5,
+			"msg": "昵称存储失败,请点右上角重新进入小程序",
 		})
 		return
 	}
