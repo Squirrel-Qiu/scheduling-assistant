@@ -45,10 +45,15 @@ func TestChooseFree(t *testing.T) {
 	req.Header.Add("cookie", cookie)
 
 	// before we actually execute our api function, we need to expect required DB actions
-	rows := sqlmock.NewRows([]string{"free_id"}).AddRow(3)
+	rows1 := sqlmock.NewRows([]string{"nick_name"}).AddRow("王小明")
+
+	mock.ExpectQuery("SELECT nick_name FROM person WHERE openid=?").
+		WithArgs("oj134ltvn555544444_4abcdefgh").WillReturnRows(rows1)
+
+	rows2 := sqlmock.NewRows([]string{"limit_choose"}).AddRow(3)
 
 	mock.ExpectQuery("SELECT limit_choose FROM rota WHERE rota_id=?").
-		WithArgs(291255583271555078).WillReturnRows(rows)
+		WithArgs(291255583271555078).WillReturnRows(rows2)
 
 	mock.ExpectBegin()
 	mock.ExpectExec("DELETE FROM free WHERE openid=\\? AND rota_id=\\?").
