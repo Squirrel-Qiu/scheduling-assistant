@@ -147,5 +147,11 @@ Page({
         }
       });
     }
+  },
+  onShareAppMessage: function() {
+    return {
+      title: '排班助手',
+      imageUrl: '../../images/capoo2.jpg'
+    }
   }
 })

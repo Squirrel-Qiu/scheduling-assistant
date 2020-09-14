@@ -27,7 +27,6 @@ var login = function() {
           }
           // 请求成功后, 把后台返回的 cookie 缓存起来
           wx.setStorageSync('cookie', res.header['Set-Cookie'])
-          // console.log('cookie为' + res.header['Set-Cookie'])
         },
         fail () {
           console.log('登录失败')

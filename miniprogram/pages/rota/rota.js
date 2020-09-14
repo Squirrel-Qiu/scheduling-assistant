@@ -13,15 +13,6 @@ Page({
       {value: '30'},{value: '31'},{value: '32'},{value: '33'},{value: '34'}
     ]
   },
-  // onShareAppMessage: function () {
-  //   let that = this;
-  //   console.log('转发分享的rotaId为:' + that.rotaId)
-  //   return {
-  //     title: '排班助手',
-  //     path: '/rota/rota?rotaId=' + that.rotaId,
-  //     imageUrl: ''
-  //   }
-  // },
   onLoad: function (options) {
     wx.showShareMenu({
       // withShareTicket: true,
@@ -119,7 +110,13 @@ Page({
       method: 'POST',
       dataType: 'json',
       success: function(res) {
-        if(res.data.status == 3) {
+        if(res.data.status == 5) {
+          wx.showModal({
+            title: '错误!',
+            content: res.data.msg,
+            showCancel: false
+          })
+        } else if(res.data.status == 3) {
           wx.showModal({
             title: '错误!',
             content: res.data.msg,
@@ -130,6 +127,9 @@ Page({
             title: '恭喜!',
             content: "提交成功",
             showCancel: false
+          })
+          wx.switchTab({
+            url: '../join/join'
           })
         } else if(res.data.status == 1 || res.data.status == 2) {
           wx.showModal({
@@ -147,5 +147,11 @@ Page({
         })
       }
     })
+  },
+  onShareAppMessage: function() {
+    return {
+      title: '排班助手',
+      imageUrl: '../../images/capoo2.jpg'
+    }
   }
 })
