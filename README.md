@@ -5,6 +5,8 @@
 
 小程序名称：duty（排班助手）
 
+API文档：https://github.com/Squirrel-Qiu/scheduling-assistant/tree/master/back-end
+
 ### *演示如下*：
 
 ![](https://github.com/Squirrel-Qiu/scheduling-assistant/blob/master/video_2021-02-25_17-57-41.gif)
