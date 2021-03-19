@@ -147,7 +147,7 @@ func (impl *Implement) Generate(ctx *gin.Context) {
 	//}
 
 
-	file := "/.../" + ctx.Param("rotaId") + ".csv"
+	file := "/srv/schedule/" + ctx.Param("rotaId") + ".csv"
 	f, err := os.Create(file)
 	if err != nil {
 		log.Printf("%+v", xerrors.Errorf("csv create failed: %w", err))

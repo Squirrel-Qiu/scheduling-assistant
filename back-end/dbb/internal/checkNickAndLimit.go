@@ -2,6 +2,7 @@ package internal
 
 import (
 	"database/sql"
+
 	"golang.org/x/xerrors"
 )
 

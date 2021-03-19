@@ -1,0 +1,9 @@
+#listenAddr
+listen = "0.0.0.0:8080"
+#mysql
+[mysql]
+url = "172.17.0.1:3306"
+username = "."
+password = "."
+#debug
+debug = true

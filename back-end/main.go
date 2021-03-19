@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/rand"
 	"database/sql"
-	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -13,6 +12,7 @@ import (
 	"time"
 
 	"schedule/api"
+	"schedule/conf"
 	"schedule/dbb"
 	"schedule/middleware"
 	"schedule/snowid"
@@ -26,16 +26,15 @@ import (
 
 func main() {
 	//dbAddr := flag.String("dbaddr", "127.0.0.1", "database addr")
-	dbUser := flag.String("dbuser", "root", "database user")
-	dbPassword := flag.String("dbpassword", "root", "database password")
-	listenAddr := flag.String("listen", "127.0.0.1:8080", "web listen addr")
-	debug := flag.Bool("debug", false, "debug mode")
+	//dbUser := flag.String("dbuser", "root", "database user")
+	//dbPassword := flag.String("dbpassword", "root", "database password")
+	//listenAddr := flag.String("listen", "127.0.0.1:8080", "web listen addr")
+	//debug := flag.Bool("debug", false, "debug mode")
 
-	flag.Parse()
+	//flag.Parse()
 
-	user := *dbUser
-	password := *dbPassword
-	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@/schedule", user, password))
+	url, user, password, listenAddr, debug := conf.ReadConf()
+	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/schedule", user, password, url))
 	if err != nil {
 		log.Fatalf("%+v", err)
 	}
@@ -46,14 +45,14 @@ func main() {
 
 	dbInstance := dbb.InitDB(db)
 
-	if !(*debug) {
+	if !(debug) {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
 	router := gin.New()
 	router.Use(gin.Recovery())
 
-	if *debug {
+	if debug {
 		router.Use(gin.ErrorLogger())
 	}
 
@@ -84,9 +83,9 @@ func main() {
 	router.DELETE("/delete/:rotaId", middleware.SessionChecker(), apI.DeleteRota)
 
 	signalChan := make(chan os.Signal, 1)
-	signal.Notify(signalChan, os.Interrupt)
+	signal.Notify(signalChan, os.Interrupt) // Interrupt Signal = syscall.SIGINT
 
-	httpServer := http.Server{Handler: router, Addr: *listenAddr}
+	httpServer := http.Server{Handler: router, Addr: listenAddr}
 
 	shutdownChan := make(chan struct{})
 
