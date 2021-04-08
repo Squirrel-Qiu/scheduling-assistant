@@ -44,6 +44,7 @@ func main() {
 	}
 
 	dbInstance := dbb.InitDB(db)
+	db.SetConnMaxLifetime(time.Second * 14400)
 
 	if !(debug) {
 		gin.SetMode(gin.ReleaseMode)
